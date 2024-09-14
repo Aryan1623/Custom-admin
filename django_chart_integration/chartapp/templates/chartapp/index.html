@@ -1,0 +1,93 @@
+{% extends 'partials/base.html' %}
+
+{% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/home2.css' %}">
+<style>
+    @media (max-width: 520px) {
+        /* Reduce font size */
+        .lead {
+            font-size: 1rem; /* Smaller lead text */
+        }
+        .special{
+            font-size: 1.5rem;
+        }
+        .tracker-animation {
+            font-size: 1rem; /* Smaller attendance tracker text */
+        }
+
+        /* Reduce card size */
+        
+        .card-body {
+            font-size: 0.8rem; /* Smaller card text */
+        }
+        .cardtext{
+            font-size: 1rem;
+        }
+        .activity-card {
+            width: 25vw; /* Smaller width */
+            height: 150px; /* Smaller height */
+        }
+    }
+    @media (min-width: 521px){
+     .activity-card {
+        width: 24vw; /* Smaller width */
+        height: 200px; /* Smaller height */
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto text-center mt-5 pt-5 px-4">
+    <p class="lead text-lg md:text-xl lg:text-2xl mb-4">
+        <span class="special text-2xl md:text-3xl">Welcome</span>, this is your <span class="tracker-animation text-xl md:text-2xl">attendance tracker</span>
+    </p>
+
+    <p class="text-md md:text-lg lead">What do you want to do</p>
+    <div class="available-activities flex flex-wrap justify-center mt-4 gap-4">
+        
+        <div class="card activity-card w-40 h-40 md:w-48 md:h-48 relative shadow-lg rounded-lg overflow-hidden bg-gray-800">
+            <div class="card-body flex justify-center items-center h-full text-lg text-white z-10">
+                <span class="cardtext">Attendance</span>
+            </div>
+            <div class="overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-400 to-blue-600 text-white opacity-0 flex justify-center items-center rounded-lg transition-opacity duration-300 cursor-pointer">
+                <a href="attendance" class="text-center">View Attendance</a>
+            </div>
+        </div>
+    
+        <div class="card activity-card w-40 h-40 md:w-48 md:h-48 relative shadow-lg rounded-lg overflow-hidden bg-gray-800">
+            <div class="card-body flex justify-center items-center h-full text-lg text-white z-10">
+                <span class="cardtext">Complain</span>
+            </div>
+            <div class="overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-400 to-blue-600 text-white opacity-0 flex justify-center items-center rounded-lg transition-opacity duration-300 cursor-pointer">
+                Raise Complain
+            </div>
+        </div>
+
+        <div class="card activity-card w-40 h-40 md:w-48 md:h-48 relative shadow-lg rounded-lg overflow-hidden bg-gray-800">
+            <div class="card-body flex justify-center items-center h-full text-lg text-white z-10">
+                <span class="cardtext">Login</span>
+            </div>
+            <div class="overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-400 to-blue-600 text-white opacity-0 flex justify-center items-center rounded-lg transition-opacity duration-300 cursor-pointer">
+                <a href="login" class="text-center">Login/Signup</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const cards = document.querySelectorAll(".activity-card");
+
+        cards.forEach(card => {
+            card.addEventListener("mouseover", function() {
+                this.querySelector(".overlay").style.opacity = "1";
+            });
+            card.addEventListener("mouseout", function() {
+                this.querySelector(".overlay").style.opacity = "0";
+            });
+        });
+    });
+</script>
+{% endblock %}

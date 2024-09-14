@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Attendance Dashboard
+{% endblock title %}
+
+{% block content %}
+    <style>
+        /* Page Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+            color: #2c3e50;
+        }
+
+        h1 {
+            text-align: center;
+            color: #001f3f; /* Navy blue */
+            margin-top: 20px;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        /* Table Styling */
+        table {
+            width: 90%;
+            max-width: 1000px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #dde3ec;
+            font-size: 18px;
+        }
+
+        th {
+            background-color: #001f3f; /* Navy blue */
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f6fc;
+        }
+
+        tr:hover {
+            background-color: #d9eaf7;
+        }
+
+        td a {
+            color: #001f3f;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        td a:hover {
+            text-decoration: underline;
+        }
+
+        tr.empty-row td {
+            color: #888;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            table, th, td {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            table, th, td {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+
+    <h1>Attendance Dashboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Attendance Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in user_attendance %}
+            <tr>
+                <td><a href="{{ record.user }}/attendance">{{ record.user }}</a></td>
+                <td>{{ record.attendance_percent }}%</td>
+            </tr>
+            {% empty %}
+            <tr class="empty-row">
+                <td colspan="2">No attendance data available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}
+

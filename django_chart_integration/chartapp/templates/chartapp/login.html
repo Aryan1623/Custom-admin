@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Navbar</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'stylenav.css' %}">
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .container1 {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #1e1e1e;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .captivatesection {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            display: flex;
+            gap: 5px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .word {
+            opacity: 0;
+            animation: appear 3s linear forwards, dissolve 3s linear 3s forwards;
+        }
+
+        @keyframes appear {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes dissolve {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .innercontainer {
+            background-color: #2c2c2c;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        form p {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #00ff00;
+        }
+
+        form input {
+            padding: 9px;
+            font-size: 14px;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            margin-bottom: 20px;
+            width: 93%;
+            background-color: #1a1a1a;
+        }
+
+        form button {
+            padding: 12px;
+            font-size: 16px;
+            color: #ffffff;
+            background: #00ff00;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        form button:hover {
+            background: #00cc00;
+        }
+
+        .signup-section {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        .signup-section a {
+            color: #00ff00;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .signup-section a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container1">
+        <div class="captivatesection">
+            <span class="word" style="animation-delay: 0s;">Let's</span>
+            <span class="word" style="animation-delay: 1s;">get</span>
+            <span class="word" style="animation-delay: 2s;">started</span>
+        </div>
+
+        <div class="innercontainer">
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <p>Username:</p>
+                <input type="text" placeholder="Enter username" name="username" required>
+                <p>Password:</p>
+                <input type="password" placeholder="Enter password" name="password" required>
+                <button type="submit">Login</button>
+            </form>
+            <div class="signup-section">
+                <p>Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const menubutton = document.querySelector('.menu-button');
+            sidebar.style.display = 'flex';
+            menubutton.style.display = 'none';
+        }
+
+        function hideSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const menubutton = document.querySelector('.menu-button');
+            sidebar.style.display = 'none';
+            menubutton.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

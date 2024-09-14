@@ -1,0 +1,112 @@
+{% extends 'base.html' %} <!-- Extend from base.html -->
+
+{% block content %}
+    <style>
+        /* Page Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+            color: #2c3e50;
+        }
+
+        h2 {
+            text-align: center;
+            color: #001f3f; /* Navy blue */
+            margin-top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* Table Styling */
+        table {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #dde3ec;
+            font-size: 18px;
+        }
+
+        th {
+            background-color: #001f3f; /* Navy blue */
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f6fc;
+        }
+
+        tr:hover {
+            background-color: #d9eaf7;
+        }
+
+        .permissions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .permissions label {
+            margin-left: 10px;
+            color: #001f3f; /* Navy blue */
+            font-weight: bold;
+        }
+
+        input[type="checkbox"] {
+            accent-color: #001f3f; /* Navy blue for checkboxes */
+            cursor: not-allowed;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            table, th, td {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 24px;
+            }
+
+            table, th, td {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+
+    <h2>User List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>
+                        <div class="permissions">
+                            <input type="checkbox" id="active-{{ user.id }}" {% if user.is_active %}checked{% endif %} disabled>
+                            <label for="active-{{ user.id }}">Active</label>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}
+

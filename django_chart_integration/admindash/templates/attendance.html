@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Attendance Dashboard
+{% endblock title %}
+
+{% block content %}
+    <style>
+        /* Overall Page Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+            color: #2c3e50;
+        }
+
+        h1 {
+            text-align: center;
+            color: #001f3f; /* Navy blue */
+            margin-top: 20px;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        p {
+            text-align: center;
+            color: #001f3f;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Table Styling */
+        table {
+            width: 90%;
+            max-width: 1000px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #dde3ec;
+        }
+
+        th {
+            background-color: #001f3f;
+            color: #ffffff;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f6fc;
+        }
+
+        tr:hover {
+            background-color: #d9eaf7;
+        }
+
+        tr.empty-row td {
+            color: #888;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            table, th, td {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+
+            table, th, td {
+                font-size: 12px;
+                padding: 10px;
+            }
+        }
+
+        /* Chart Container Styling */
+        .chart-container {
+            width: 45%;
+            height: 400px; /* Set a fixed height */
+            margin: 20px;
+            display: inline-block;
+        }
+
+        /* Ensure both charts fit side by side */
+        .charts-wrapper {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        /* Pagination Styling */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination button {
+            background-color: #001f3f;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .pagination button.disabled {
+            background-color: #d9eaf7;
+            cursor: not-allowed;
+        }
+    </style>
+
+    <h1>Attendance Dashboard for {{ user_attendance.0.user.username }}</h1>
+    <p>Overall Attendance Percentage: {{ attendance_percent }}%</p>
+    
+    <!-- Attendance Table -->
+    <table id="attendanceTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in user_attendance %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td>{{ record.status }}</td>
+            </tr>
+            {% empty %}
+            <tr class="empty-row">
+                <td colspan="2">No attendance data available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div class="pagination">
+        <button id="prevPage" class="disabled" disabled>Previous</button>
+        <button id="nextPage">Next</button>
+    </div>
+
+    <!-- Charts Container -->
+    <div class="charts-wrapper">
+        <!-- Pie Chart Container -->
+        <div class="chart-container">
+            <canvas id="attendanceChart"></canvas>
+        </div>
+        
+        <!-- Bar Chart Container -->
+        <div class="chart-container">
+            <canvas id="attendanceBarChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Ensure Chart.js is included -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const rowsPerPage = 5;
+            const table = document.getElementById('attendanceTable');
+            const rows = table.querySelectorAll('tbody tr');
+            const totalRows = rows.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+            let currentPage = 1;
+
+            function showPage(page) {
+                rows.forEach((row, index) => {
+                    row.style.display = (index >= (page - 1) * rowsPerPage && index < page * rowsPerPage) ? '' : 'none';
+                });
+                document.getElementById('prevPage').classList.toggle('disabled', page === 1);
+                document.getElementById('prevPage').disabled = page === 1;
+                document.getElementById('nextPage').classList.toggle('disabled', page === totalPages);
+                document.getElementById('nextPage').disabled = page === totalPages;
+            }
+
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    showPage(currentPage);
+                }
+            });
+
+            document.getElementById('nextPage').addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    showPage(currentPage);
+                }
+            });
+
+            showPage(currentPage);
+        });
+
+        // Function to calculate attendance data from the table
+        function calculateAttendanceData() {
+            let presentDays = 0;
+            let absentDays = 0;
+            let monthlyAttendance = {};
+
+            // Select all rows in the table body
+            const rows = document.querySelectorAll('tbody tr');
+
+            // Iterate through each row and count the occurrences of 'Present' and 'Absent'
+            rows.forEach(row => {
+                const statusCell = row.cells[1]; // Assuming status is in the second cell
+                const dateCell = row.cells[0]; // Assuming date is in the first cell
+                if (statusCell && dateCell) {
+                    const status = statusCell.textContent.trim().toLowerCase();
+                    const date = new Date(dateCell.textContent.trim());
+
+                    if (status === 'present') {
+                        presentDays += 1;
+
+                        // Extract month in short form
+                        const month = date.toLocaleString('default', { month: 'short' });
+                        if (!monthlyAttendance[month]) {
+                            monthlyAttendance[month] = 0;
+                        }
+                        monthlyAttendance[month] += 1;
+                    } else if (status === 'absent') {
+                        absentDays += 1;
+                    }
+                }
+            });
+
+            return { presentDays, absentDays, monthlyAttendance };
+        }
+
+        // Execute the function and get the attendance data
+        const { presentDays, absentDays, monthlyAttendance } = calculateAttendanceData();
+
+        // Prepare data for the pie chart
+        const ctxPie = document.getElementById('attendanceChart').getContext('2d');
+        new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Present', 'Absent'],
+                datasets: [{
+                    data: [presentDays, absentDays],
+                    backgroundColor: ['#36A2EB', '#FF6384'],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: true,
+                    }
+                }
+            }
+        });
+
+        // Prepare data for the bar chart
+        const months = Object.keys(monthlyAttendance);
+        const daysPresent = months.map(month => monthlyAttendance[month]);
+
+        const ctxBar = document.getElementById('attendanceBarChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Days Present',
+                    data: daysPresent,
+                    backgroundColor: '#36A2EB',
+                    borderColor: '#36A2EB',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Days'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: true,
+                    }
+                }
+            }
+        });
+
+        // Trigger the slide-up animation
+        window.addEventListener('load', () => {
+            const elements = document.querySelectorAll('h1, h2, table, .pagination, .charts-wrapper');
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 150); // Delay each element slightly for a staggered effect
+            });
+        });
+    </script>
+{% endblock content %}
+
+

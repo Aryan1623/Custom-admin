@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Attendance</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Attendance</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Attendance Percentage (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in user_attendance_data %}
+            <tr>
+                <td>{{ data.user }}</td>
+                <td>{{ data.attendance_percentage|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

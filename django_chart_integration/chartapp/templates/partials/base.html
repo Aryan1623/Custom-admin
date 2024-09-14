@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <title>My Site</title>
+    {% block head %}
+    {% endblock %}
+    {% load static %}
+</head>
+
+<style>
+    /* Ensure the navbar is always on top */
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        display: flex;
+        background-color: black;
+        padding: 15px 20px;
+        color: white;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Padding for the content to appear below the navbar */
+    .content-container {
+        padding-top: 100px;
+    }
+
+    .data-container {
+        width: 100%;
+        max-width: 1200px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .Logo {
+        width: 70px;
+    }
+
+    a {
+        text-decoration: none;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 25px;
+        transition: background-color 0.3s ease-in;
+        margin: 0 10px;
+        font-weight: bold;
+    }
+
+    a:hover {
+        background-color: white;
+        color: rgb(0, 12, 34);
+    }
+
+    /* Menu container */
+    .menu-data {
+        display: flex;
+        align-items: center;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    /* Initially hide menu on mobile */
+    .menu-data.hidden {
+        display: none;
+    }
+
+    /* Menu bar and close icons */
+    .size-icon {
+        font-size: 26px;
+        cursor: pointer;
+    }
+
+    /* Styles for screens <= 991px */
+    @media (max-width: 991px) {
+        /* Make the menu appear as a sidebar */
+        .menu-data {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: 100%;
+            background-color: black;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding: 20px;
+            transform: translateX(100%);
+            z-index: 999;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* When menu is open */
+        .menu-data.open {
+            transform: translateX(0);
+        }
+
+        /* Show the menu bar icon to the right */
+        .size-icon {
+            display: block;
+            margin-left: auto;
+        }
+    }
+
+    /* Styles for screens >= 992px */
+    @media (min-width: 992px) {
+        .menu-data {
+            display: flex;
+            position: static;
+            flex-direction: row;
+            transform: none;
+            background-color: transparent;
+            width: auto;
+            height: auto;
+            padding: 0;
+        }
+
+        .menu-data > a {
+            display: inline;
+        }
+
+        .size-icon {
+            display: none;
+        }
+        .item{
+            align-self: right;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .navbar {
+            height: 60px;
+        }
+    }
+</style>
+
+<body>
+    <nav class="navbar">
+        <div class="data-container">
+            <img src="https://i.ibb.co/kGbqdSB/NEW-2.png" class="Logo">
+            <div id="menu-time" class="menu-data animate__animated hidden">
+                <a id="close" class="size-icon fa-solid fa-xmark close-icon" onclick="closeMenu()"></a>
+                <a href="#">Home</a>
+                <a href="#">About Us</a>
+
+                {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                {% endif %}
+            </div>
+            <a id="menu-bar" class="size-icon fa-solid fa-bars menu-bar-icon item" onclick="openMenu()"></a>
+        </div>
+    </nav>
+
+    <!-- Content block -->
+    <div class="content-container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script src="https://kit.fontawesome.com/7103fc097b.js" crossorigin="anonymous"></script>
+    <script>
+        // Function to open the menu
+        function openMenu() {
+            var menu = document.getElementById('menu-time');
+            var menuBarIcon = document.getElementById('menu-bar');
+            var closeIcon = document.getElementById('close');
+
+            // Display the menu and icons
+            menu.classList.add('open');
+            menu.classList.remove('hidden');
+            menuBarIcon.style.display = 'none'; // Hide menu bar icon
+            closeIcon.style.display = 'block'; // Show close icon
+        }
+
+        // Function to close the menu
+        function closeMenu() {
+            var menu = document.getElementById('menu-time');
+            var menuBarIcon = document.getElementById('menu-bar');
+            var closeIcon = document.getElementById('close');
+
+            // Hide the menu and reset icons
+            menu.classList.remove('open');
+            menu.classList.add('hidden');
+            menuBarIcon.style.display = 'block'; // Show menu bar icon
+            closeIcon.style.display = 'none'; // Hide close icon
+        }
+    </script>
+</body>
+
+</html>

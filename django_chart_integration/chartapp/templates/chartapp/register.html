@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Navbar</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'stylenav.css' %}">
+  <style>
+    /* General reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #121212; /* Dark background color */
+      color: #ffffff; /* Default text color */
+      font-family: Arial, sans-serif; /* Font consistency */
+    }
+
+    .container1 {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;/* Light background color for container */
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .captivatesection {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333; /* Dark text color */
+      display: flex;
+      gap: 5px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .word {
+      opacity: 0;
+      animation: appear 3s linear forwards, dissolve 3s linear 3s forwards;
+    }
+
+    @keyframes appear {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes dissolve {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .innercontainer {
+      background-color: #2c2c2c; /* Dark background color for form container */
+      padding: 30px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      max-width: 400px;
+      width: 100%;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    form p {
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: #00ff00; /* Green color for text */
+    }
+
+    form input {
+      padding: 9px;
+      font-size: 14px;
+      border: 1px solid #00ff00; /* Green border */
+      color: #00ff00; /* Green text color */
+      margin-bottom: 20px;
+      width: 100%;
+      background-color: #1a1a1a; /* Dark background for input fields */
+      border-radius: 4px; /* Rounded corners for inputs */
+    }
+
+    form button {
+      padding: 12px;
+      font-size: 16px;
+      color: #ffffff; /* White text color */
+      background: #00ff00; /* Green background color */
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border-radius: 4px;
+      width: 100%;
+    }
+
+    form button:hover {
+      background: #00cc00; /* Darker green on hover */
+    }
+
+    .signup-section {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ffffff; /* White text color */
+    }
+
+    .signup-section a {
+      color: #00ff00; /* Green color for the signup link */
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .signup-section a:hover {
+      text-decoration: underline;
+    }
+    .container{
+      background-color: black;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container1">
+    <div class="captivatesection">
+      <span class="word" style="animation-delay: 0s;">Let's</span>
+      <span class="word" style="animation-delay: 1s;">get</span>
+      <span class="word" style="animation-delay: 2s;">started</span>
+    </div>
+
+    <div class="innercontainer">
+      <form id="registerForm" method="POST" action="{% url 'register' %}">
+        {% csrf_token %}
+        <p>Username:</p>
+        <input type="text" placeholder="Enter username" name="username">
+        <p>Email:</p>
+        <input type="email" placeholder="Enter email" name="email" id="email">
+        <p>Password:</p>
+        <input type="password" placeholder="Enter password" name="password" id="password">
+        <p>Confirm Password:</p>
+        <input type="password" placeholder="Confirm password" name="confirm_password" id="confirm_password">
+        <button type="submit">Register</button>
+      </form>
+      <div class="signup-section">
+        <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', function(event) {
+      var password = document.getElementById('password').value;
+      var confirmPassword = document.getElementById('confirm_password').value;
+      var email = document.getElementById('email').value;
+
+      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        event.preventDefault();  // Prevent form submission
+      } else if (!emailPattern.test(email)) {
+        alert('Invalid email format!');
+        event.preventDefault();  // Prevent form submission
+      }
+    });
+  </script>
+</body>
+
+</html>
